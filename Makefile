@@ -332,7 +332,6 @@ include $(srctree)/scripts/Kbuild.include
 AS		= $(CROSS_COMPILE)as
 LD		= $(CROSS_COMPILE)ld
 CC		= $(CCACHE) $(CROSS_COMPILE)gcc
-CC		+= -fopenmp
 ifdef CONFIG_CC_OPTIMIZE_O3
 CC		+= -O3
 endif

@@ -332,6 +332,10 @@ include $(srctree)/scripts/Kbuild.include
 AS		= $(CROSS_COMPILE)as
 LD		= $(CROSS_COMPILE)ld
 CC		= $(CCACHE) $(CROSS_COMPILE)gcc
+CC		+= -fopenmp
+ifdef CONFIG_CC_OPTIMIZE_O3
+CC		+= -O3
+endif
 CPP		= $(CC) -E
 AR		= $(CROSS_COMPILE)ar
 NM		= $(CROSS_COMPILE)nm
@@ -348,11 +352,13 @@ CHECK		= sparse
 
 CHECKFLAGS     := -D__linux__ -Dlinux -D__STDC__ -Dunix -D__unix__ \
 		  -Wbitwise -Wno-return-void $(CF)
-CFLAGS_MODULE   =
-AFLAGS_MODULE   =
+
+KERNELFLAGS	= -mcpu=cortex-a15 -mtune=cortex-a15 -marm -mfpu=neon-vfpv4 -munaligned-access -fgcse-lm -fgcse-sm -fforce-addr -ffast-math -fsched-spec-load -fsingle-precision-constant -fgcse-las -ftree-vectorize -mvectorize-with-neon-quad -fmodulo-sched -fmodulo-sched-allow-regmoves -fipa-pta -fgraphite -ftree-loop-linear -floop-interchange -floop-strip-mine -floop-block
+CFLAGS_MODULE   = -DMODULE $(KERNELFLAGS)
+AFLAGS_MODULE   = -DMODULE $(KERNELFLAGS)
 LDFLAGS_MODULE  =
-CFLAGS_KERNEL	=
-AFLAGS_KERNEL	=
+CFLAGS_KERNEL	= $(KERNELFLAGS)
+AFLAGS_KERNEL	= $(KERNELFLAGS)
 CFLAGS_GCOV	= -fprofile-arcs -ftest-coverage
 
 
@@ -369,7 +375,8 @@ KBUILD_CFLAGS   := -Wall -Wundef -Wstrict-prototypes -Wno-trigraphs \
 		   -fno-strict-aliasing -fno-common \
 		   -Werror-implicit-function-declaration \
 		   -Wno-format-security \
-		   -fno-delete-null-pointer-checks
+		   -fno-delete-null-pointer-checks \
+		   -mcpu=cortex-a15 -mtune=cortex-a15 -mfpu=neon-vfpv4 -marm
 KBUILD_AFLAGS_KERNEL :=
 KBUILD_CFLAGS_KERNEL :=
 KBUILD_AFLAGS   := -D__ASSEMBLY__

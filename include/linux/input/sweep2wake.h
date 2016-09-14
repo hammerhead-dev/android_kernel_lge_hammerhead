@@ -22,6 +22,5 @@
 #define _LINUX_SWEEP2WAKE_H
 
 extern int s2w_switch, s2w_s2sonly;
-void wake_pwrtrigger(void);
 
 #endif	/* _LINUX_SWEEP2WAKE_H */

@@ -22,16 +22,12 @@
 #include <linux/pwm.h>
 #include <linux/err.h>
 #ifdef CONFIG_TOUCHSCREEN_PREVENT_SLEEP
-#include <linux/input/prevent_sleep.h>
 #ifdef CONFIG_TOUCHSCREEN_SWEEP2WAKE
 #include <linux/input/sweep2wake.h>
 #endif
 #ifdef CONFIG_TOUCHSCREEN_DOUBLETAP2WAKE
 #include <linux/input/doubletap2wake.h>
 #endif
-#endif
-#ifdef CONFIG_PWRKEY_SUSPEND
-#include <linux/qpnp/power-on.h>
 #endif
 
 #include "mdss_dsi.h"
@@ -182,19 +178,12 @@ void mdss_dsi_panel_reset(struct mdss_panel_data *pdata, int enable)
 	bool prevent_sleep = false;
 #endif
 #if defined(CONFIG_TOUCHSCREEN_SWEEP2WAKE)
-	prevent_sleep = (s2w_switch == 1) && (s2w_s2sonly == 0);
+	prevent_sleep = (s2w_switch > 0) && (s2w_s2sonly == 0);
 #endif
 #if defined(CONFIG_TOUCHSCREEN_DOUBLETAP2WAKE)
 	prevent_sleep = prevent_sleep || (dt2w_switch > 0);
 #endif
-	if (prevent_sleep && in_phone_call)
-		prevent_sleep = false;
 #endif
-#ifdef CONFIG_PWRKEY_SUSPEND
-	if (pwrkey_pressed)
-		prevent_sleep = false;
-#endif
-
 	if (pdata == NULL) {
 		pr_err("%s: Invalid input data\n", __func__);
 		return;
@@ -339,19 +328,12 @@ static int mdss_dsi_panel_off(struct mdss_panel_data *pdata)
 	bool prevent_sleep = false;
 #endif
 #if defined(CONFIG_TOUCHSCREEN_SWEEP2WAKE)
-	prevent_sleep = (s2w_switch == 1) && (s2w_s2sonly == 0);
+	prevent_sleep = (s2w_switch > 0) && (s2w_s2sonly == 0);
 #endif
 #if defined(CONFIG_TOUCHSCREEN_DOUBLETAP2WAKE)
 	prevent_sleep = prevent_sleep || (dt2w_switch > 0);
 #endif
-	if (prevent_sleep && in_phone_call)
-		prevent_sleep = false;
 #endif
-#ifdef CONFIG_PWRKEY_SUSPEND
-	if (pwrkey_pressed)
-		prevent_sleep = false;
-#endif
-
 	if (pdata == NULL) {
 		pr_err("%s: Invalid input data\n", __func__);
 		return -EINVAL;

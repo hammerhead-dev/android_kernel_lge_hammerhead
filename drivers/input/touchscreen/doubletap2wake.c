@@ -61,8 +61,8 @@ MODULE_LICENSE("GPLv2");
 #define DT2W_DEFAULT		0
 
 #define DT2W_PWRKEY_DUR		60
-#define DT2W_FEATHER		200
-#define DT2W_TIME		700
+#define DT2W_FEATHER		150
+#define DT2W_TIME           	600
 
 /* Resources */
 int dt2w_switch = DT2W_DEFAULT;
@@ -84,6 +84,9 @@ static int __init read_dt2w_cmdline(char *dt2w)
 	if (strcmp(dt2w, "1") == 0) {
 		pr_info("[cmdline_dt2w]: DoubleTap2Wake enabled. | dt2w='%s'\n", dt2w);
 		dt2w_switch = 1;
+	} else if (strcmp(dt2w, "2") == 0) {
+		pr_info("[cmdline_dt2w]: DoubleTap2Wake fullscreen enabled. | dt2w='%s'\n", dt2w);
+		dt2w_switch = 2;
 	} else if (strcmp(dt2w, "0") == 0) {
 		pr_info("[cmdline_dt2w]: DoubleTap2Wake disabled. | dt2w='%s'\n", dt2w);
 		dt2w_switch = 0;
@@ -149,6 +152,12 @@ static void detect_doubletap2wake(int x, int y, bool st)
         pr_info(LOGTAG"x,y(%4d,%4d) single:%s\n",
                 x, y, (single_touch) ? "true" : "false");
 #endif
+	if (x < 100 || x > 980)
+		return;
+
+	if (dt2w_switch < 2 && y < 1000)
+		return;
+
 	if ((single_touch) && (dt2w_switch > 0) && (exec_count) && (touch_cnt)) {
 		touch_cnt = false;
 		if (touch_nr == 0) {
@@ -331,7 +340,11 @@ static ssize_t dt2w_doubletap2wake_dump(struct device *dev,
 {
 	if (buf[0] >= '0' && buf[0] <= '2' && buf[1] == '\n')
                 if (dt2w_switch != buf[0] - '0')
-		        dt2w_switch = buf[0] - '0';
+			 dt2w_switch = buf[0] - '0';
+
+	if (scr_suspended && !dt2w_switch && !s2w_switch) {
+		wake_pwrtrigger();
+	}
 
 	return count;
 }

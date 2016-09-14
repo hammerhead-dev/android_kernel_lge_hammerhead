@@ -1,7 +1,5 @@
 /*
- * include/linux/input/sweep2wake.h
- *
- * Copyright (c) 2013, Dennis Rassmann <showp1984@gmail.com>
+ * include/linux/input/prevent_sleep.h
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,10 +16,9 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef _LINUX_SWEEP2WAKE_H
-#define _LINUX_SWEEP2WAKE_H
+#ifndef _LINUX_PREVENT_SLEEP_H
+#define _LINUX_PREVENT_SLEEP_H
 
-extern int s2w_switch, s2w_s2sonly;
-void wake_pwrtrigger(void);
+extern bool in_phone_call;
 
-#endif	/* _LINUX_SWEEP2WAKE_H */
+#endif	/* _LINUX_PREVENT_SLEEP_H */
